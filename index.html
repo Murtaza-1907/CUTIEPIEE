@@ -1,14 +1,135 @@
-<!DOCTYPE html><html><head>
-    <script src="p5.js"></script>
-    <script src="p5.dom.min.js"></script>
-    <script src="p5.sound.min.js"></script>
-<script src="./p5.play.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <meta charset="utf-8">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>2 WEEKS ALREADYYY CUTIE PIE</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Dancing+Script&display=swap');
+    html, body {
+      margin:0; padding:0; width:100%; height:100%;
+      background: url('paper-texture.jpg') center/cover no-repeat;
+      font-family: 'Cormorant Garamond', serif;
+      color:#4b3d2a;
+      display:flex; align-items:center; justify-content:center;
+      overflow:hidden;
+    }
+    .envelope-container {
+      position:relative; width:600px; height:400px;
+      cursor:pointer;
+    }
+    img.envelope { width:100%; display:block; }
+    .letter {
+      position:absolute; top:5%; left:5%;
+      width:90%; height:90%;
+      background:#fbf4e2;
+      box-shadow:0 4px 15px rgba(0,0,0,0.2);
+      transform:translateY(100%) rotateX(-90deg);
+      transition: transform 1s ease, opacity 1s ease;
+      opacity:0; display:flex; flex-direction:column;
+    }
+    .open .letter {
+      transform:translateY(0) rotateX(0);
+      opacity:1;
+    }
+    .open .envelope { animation: glitch 0.5s ease forwards 1s; }
+    @keyframes glitch {
+      0%, 50% { opacity:1; }
+      60% { opacity:0; transform:translate(5px,-5px); }
+      100% { opacity:0; transform:translate(-10px,10px); }
+    }
+    .letter-header { text-align:center; font-family:'Dancing Script'; font-size:32px; margin:20px 0; }
+    .letter-body {
+      flex:1; padding:0 30px;
+      font-size:18px; line-height:1.8;
+      white-space: pre-wrap; overflow-y:auto;
+    }
+    .signature { text-align:right; margin:20px 30px; font-family:'Dancing Script'; font-size:24px; }
+    .buttons { text-align:center; margin-bottom:20px; }
+    .btn {
+      background:#a67c52; color:#fff; border:none;
+      padding:10px 20px; margin:0 8px;
+      font-size:16px; border-radius:30px;
+      box-shadow:0 4px rgba(0,0,0,0.1);
+      cursor:pointer; transition:background 0.3s, transform 0.2s;
+    }
+    .btn:hover { background:#8b6a44; transform: translateY(-2px); }
+    .download-btn { background:#6a5a3f; }
+    .download-btn:hover { background:#544730; }
+  </style>
+</head>
+<body>
+  <audio id="flipSound" src="paper-flip.mp3"></audio>
+  <audio id="bgMusic" src="background-music.mp3" loop></audio>
 
-  </head>
-  <body>
-      <script src="sketch.js"></script>
-  
+  <div class="envelope-container" id="env">
+    <img src="envelope.png" alt="Envelope" class="envelope" id="envImg">
+    <div class="letter" id="letter">
+      <div class="letter-header">To My Cutest ❤️</div>
+      <div class="letter-body" id="letter-body">
+HI MY CUTE LITTLE RED FLAG
+ HOWWW AREE YOUUUUUU 
 
-</body></html>
+SOOOOO LADDUU
+
+ITSS ALREADYY 2 FUCKINGG WEEKS I CANT TELL U HOW MUCHHH I LOVE YOUU❤️❤️❤️
+I AM SOO SORRY I AINT THERE WITHH YOUU 
+EACH DAY WITHOUT YOU MAKES ME CRAVE YOU MORE😘😘
+SINCEEE I COULDNT GIVE YOU A PHYSICAL LETTER I WROTE THIS FOR YOU A PAPER MIGHT LOOSE ITS INK BUT THIS THIS WILL NEVERR EVER FADE
+JUST LIKE MY LOVE FOR YOU❤
+I AM MISSING U SOO BADD YOUR SMILE YOUR HUG YOUR TOUCHHHH EVERY SINGLE THING ABOUT YOUUU YOUU NEVER LEAVE MYY MINDDD😘😘💕💕
+I HOPEE THIS THING LASTSS FOREVER
+AMANTOBILLAH NO NAZAR
+DONT SEND THISS TOOO ANYONEEE I'LL KILL UUU😂😂
+
+      </div>
+      <div class="signature">— Your Chachundar🐭</div>
+      <div class="buttons">
+        <!-- <button class="btn" onclick="sendAgain()">Send Again 💌</button> -->
+        <!-- <button class="btn" onclick="editLetter()">Edit ✍️</button> -->
+        <!-- <button class="btn download-btn" onclick="downloadPDF()">Download PDF 📄</button> -->
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    const env = document.getElementById('env'),
+          envImg = document.getElementById('envImg'),
+          flip = document.getElementById('flipSound'),
+          bg = document.getElementById('bgMusic'),
+          { jsPDF } = window.jspdf;
+
+    let opened = false;
+    env.addEventListener('click', () => {
+      if (!opened) {
+        opened = true;
+        flip.play();
+        bg.play().catch(() => {});
+        env.classList.add('open');
+        setTimeout(() => envImg.style.display = 'none', 1500);
+      }
+    });
+
+    function sendAgain(){ alert('Letter sent again! 💌'); }
+    function editLetter(){
+      const b = document.getElementById('letter-body'),
+            t = prompt('Edit your letter:', b.innerText);
+      if(t!=null) b.innerText = t;
+    }
+    function downloadPDF(){
+      const d = new jsPDF({unit:'pt', format:'a4'});
+      const hdr = document.querySelector('.letter-header').innerText,
+            body = document.getElementById('letter-body').innerText,
+            sig = document.querySelector('.signature').innerText;
+      d.setFont('Cormorant Garamond');
+      d.setFontSize(24); d.text(hdr, 40, 60);
+      d.setFontSize(14);
+      const lines = d.splitTextToSize(body, 520);
+      d.text(lines, 40, 100);
+      d.text(sig, 40, 100 + lines.length * 16);
+      d.save('Vintage_Love_Letter.pdf');
+    }
+  </script>
+</body>
+</html>
