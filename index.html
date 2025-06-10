@@ -13,7 +13,23 @@
       color:#4b3d2a;
       display:flex; align-items:center; justify-content:center;
       overflow:hidden;
+      flex-direction:column;
     }
+
+    .countdown {
+      font-family:'Dancing Script', cursive;
+      font-size:28px;
+      color:#8b6a44;
+      margin-top:20px;
+      margin-bottom:10px;
+      animation: fadeIn 1s ease-in-out infinite alternate;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0.5; }
+      to { opacity: 1; }
+    }
+
     .envelope-container {
       position:relative; width:600px; height:400px;
       cursor:pointer;
@@ -62,6 +78,8 @@
   <audio id="flipSound" src="paper-flip.mp3"></audio>
   <audio id="bgMusic" src="background-music.mp3" loop></audio>
 
+  <div class="countdown" id="countdown">Letter unlocks in... ⏳</div>
+
   <div class="envelope-container" id="env">
     <img src="envelope.png" alt="Envelope" class="envelope" id="envImg">
     <div class="letter" id="letter">
@@ -76,12 +94,12 @@ ITSS ALREADYY 2 FUCKINGG WEEKS I CANT TELL U HOW MUCHHH I LOVE YOUU❤️❤️�
 I AM SOO SORRY I AINT THERE WITHH YOUU 
 EACH DAY WITHOUT YOU MAKES ME CRAVE YOU MORE😘😘
 SINCEEE I COULDNT GIVE YOU A PHYSICAL LETTER I WROTE THIS FOR YOU A PAPER MIGHT LOOSE ITS INK BUT THIS THIS WILL NEVERR EVER FADE
-JUST LIKE MY LOVE FOR YOU❤
+JUST LIKE MY LOVE FOR YOU❤️
 I AM MISSING U SOO BADD YOUR SMILE YOUR HUG YOUR TOUCHHHH EVERY SINGLE THING ABOUT YOUUU YOUU NEVER LEAVE MYY MINDDD😘😘💕💕
 I HOPEE THIS THING LASTSS FOREVER
 AMANTOBILLAH NO NAZAR
+I LOVE YOU❤️
 DONT SEND THISS TOOO ANYONEEE I'LL KILL UUU😂😂
-
       </div>
       <div class="signature">— Your Chachundar🐭</div>
       <div class="buttons">
@@ -98,10 +116,45 @@ DONT SEND THISS TOOO ANYONEEE I'LL KILL UUU😂😂
           envImg = document.getElementById('envImg'),
           flip = document.getElementById('flipSound'),
           bg = document.getElementById('bgMusic'),
+          countdownEl = document.getElementById('countdown'),
           { jsPDF } = window.jspdf;
 
     let opened = false;
+
+    // Unlock time → coming midnight today (12 AM of tomorrow)
+    const now = new Date();
+    const unlockTime = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+
+    // Countdown updater
+    function updateCountdown() {
+      const currentTime = new Date();
+      const timeLeftMs = unlockTime - currentTime;
+
+      if (timeLeftMs <= 0) {
+        countdownEl.textContent = 'The letter is now unlocked! Click to open 💌';
+        return;
+      }
+
+      const hours = Math.floor(timeLeftMs / (1000 * 60 * 60));
+      const minutes = Math.floor((timeLeftMs % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeLeftMs % (1000 * 60)) / 1000);
+
+      countdownEl.textContent = `Letter unlocks in ${hours}h ${minutes}m ${seconds}s ⏳`;
+    }
+
+    // Run countdown every second
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // Click on envelope
     env.addEventListener('click', () => {
+      const currentTime = new Date();
+
+      if (currentTime < unlockTime) {
+        alert(`Patience cutie! The letter will open at midnight ❤️`);
+        return;
+      }
+
       if (!opened) {
         opened = true;
         flip.play();
